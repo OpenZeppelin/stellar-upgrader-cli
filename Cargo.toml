@@ -1,0 +1,23 @@
+[package]
+name = "stellar-upgrader"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+description = "A Stellar CLI plugin to simplify contract upgrades"
+license = "Apache-2.0"
+repository = "https://github.com/your-username/stellar-upgrader"
+readme = "README.md"
+
+[dependencies]
+clap = { version = "4.3.8", features = ["derive"] }
+# We'll need to interact with the Stellar CLI
+stellar-cli-plugin = "0.0.2"
+# Add any other dependencies needed
+
+[lib]
+name = "stellar_upgrader_plugin"
+path = "src/lib.rs"
+
+[[bin]]
+name = "stellar-upgrader"
+path = "src/main.rs" 

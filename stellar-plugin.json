@@ -1,0 +1,12 @@
+{
+  "name": "stellar-upgrader",
+  "description": "A Stellar CLI plugin to simplify contract upgrades",
+  "version": "0.1.0",
+  "commands": [
+    {
+      "name": "contract upgrade",
+      "description": "Upgrade a Stellar smart contract with security checks",
+      "exec": "stellar-upgrader upgrade"
+    }
+  ]
+} 
