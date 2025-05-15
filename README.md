@@ -17,7 +17,7 @@ This plugin provides a streamlined interface for upgrading Stellar smart contrac
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/stellar-upgrader.git
+git clone https://github.com/OpenZeppelin/stellar-upgrader-cli.git
 cd stellar-upgrader
 
 # Build and install
