@@ -10,9 +10,7 @@ readme = "README.md"
 
 [dependencies]
 clap = { version = "4.3.8", features = ["derive"] }
-# We'll need to interact with the Stellar CLI
-stellar-cli-plugin = "0.0.2"
-# Add any other dependencies needed
+regex = "1.10.3"
 
 [lib]
 name = "stellar_upgrader_plugin"

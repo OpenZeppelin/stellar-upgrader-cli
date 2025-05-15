@@ -1,6 +1,8 @@
 use clap::{Parser, Subcommand};
 use std::process::Command;
 
+mod security_checks;
+
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct UpgraderCli {
@@ -31,16 +33,6 @@ pub struct UpgradeArgs {
     /// Network to use (testnet, futurenet, mainnet)
     #[arg(long, default_value = "testnet")]
     pub network: String,
-}
-
-/// Perform security checks before upgrading
-pub fn perform_security_checks(args: &UpgradeArgs) -> Result<(), String> {
-    println!("Security check 1");
-    println!("Security check 2");
-    println!("Security check 3");
-    
-    // For now, all checks pass
-    Ok(())
 }
 
 /// Execute a shell command and return the result
@@ -94,8 +86,8 @@ pub fn generate_upgrade_command(args: &UpgradeArgs) -> String {
 
 /// Run the upgrade command after security checks
 pub fn run_upgrade(args: &UpgradeArgs) -> Result<(), String> {
-    // Perform security checks
-    perform_security_checks(args)?;
+    // Perform security checks using the modular system
+    security_checks::run_all_checks(args)?;
     
     // Generate the upgrade command
     let command = generate_upgrade_command(args);
