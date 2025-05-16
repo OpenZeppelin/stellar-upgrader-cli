@@ -11,6 +11,16 @@ mod integration_tests {
             wasm_hash: "test_hash".to_string(),
             source: "test_source".to_string(),
             network: "testnet".to_string(),
+            rpc_url: None,
+            rpc_header: None,
+            network_passphrase: None,
+            fee: 100,
+            is_view: false,
+            instructions: None,
+            build_only: false,
+            send: None,
+            cost: false,
+            contract_args: vec![],
         }
     }
     

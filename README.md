@@ -26,6 +26,8 @@ cargo install --path .
 
 ## Usage
 
+### Basic Usage
+
 ```bash
 # Instead of the verbose command:
 stellar contract invoke \
@@ -42,6 +44,45 @@ stellar contract upgrade --id CONTRACT_ID --wasm-hash 9ab3011a533a116f82f99ebcd0
 # You can also specify network and source (optional):
 stellar contract upgrade --id CONTRACT_ID --wasm-hash HASH --network testnet --source alice
 ```
+
+### Advanced Options
+
+The plugin supports all the parameters of the original `stellar contract invoke` command:
+
+```bash
+stellar contract upgrade \
+  --id CONTRACT_ID \
+  --wasm-hash HASH \
+  --source alice \
+  --network testnet \
+  --rpc-url https://soroban-testnet.stellar.org \
+  --rpc-header "Authorization: Bearer token" \
+  --network-passphrase "Test SDF Network ; September 2015" \
+  --fee 200 \
+  --is-view \
+  --instructions 100000 \
+  --build-only \
+  --send yes \
+  --cost
+```
+
+#### Parameter Reference
+
+| Parameter | Description |
+|-----------|-------------|
+| `--id` | Contract ID to upgrade (required) |
+| `--wasm-hash` | The new WASM hash for the upgrade (required) |
+| `--source` | Source account that will submit the transaction (default: "alice") |
+| `--network` | Network to use: testnet, futurenet, mainnet (default: "testnet") |
+| `--rpc-url` | RPC server endpoint |
+| `--rpc-header` | RPC Header(s) to include in requests to the RPC provider |
+| `--network-passphrase` | Network passphrase to sign the transaction |
+| `--fee` | Fee amount for transaction, in stroops (1 stroop = 0.0000001 XLM) |
+| `--is-view` | View the result by simulating, without signing or submitting the transaction |
+| `--instructions` | Number of instructions to simulate |
+| `--build-only` | Build the transaction and only write the base64 XDR to stdout |
+| `--send` | Whether to send the transaction: "yes", "no", "default" |
+| `--cost` | Output the cost execution to stderr |
 
 ## Security Checks
 

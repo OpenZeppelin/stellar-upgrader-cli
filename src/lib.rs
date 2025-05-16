@@ -33,6 +33,46 @@ pub struct UpgradeArgs {
     /// Network to use (testnet, futurenet, mainnet)
     #[arg(long, default_value = "testnet")]
     pub network: String,
+
+    /// RPC server endpoint
+    #[arg(long)]
+    pub rpc_url: Option<String>,
+
+    /// RPC Header(s) to include in requests to the RPC provider
+    #[arg(long)]
+    pub rpc_header: Option<Vec<String>>,
+
+    /// Network passphrase to sign the transaction
+    #[arg(long)]
+    pub network_passphrase: Option<String>,
+
+    /// Fee amount for transaction, in stroops (1 stroop = 0.0000001 XLM)
+    #[arg(long, default_value = "100")]
+    pub fee: u32,
+
+    /// Whether to only simulate the transaction
+    #[arg(long)]
+    pub is_view: bool,
+
+    /// Number of instructions to simulate
+    #[arg(long)]
+    pub instructions: Option<u32>,
+
+    /// Only build the transaction and output base64 XDR
+    #[arg(long)]
+    pub build_only: bool,
+
+    /// Whether to send the transaction (yes, no, default)
+    #[arg(long, default_value = "default")]
+    pub send: Option<String>,
+
+    /// Output the cost execution to stderr
+    #[arg(long)]
+    pub cost: bool,
+    
+    /// Additional contract function arguments
+    #[arg(last = true)]
+    pub contract_args: Vec<String>,
 }
 
 /// Execute a shell command and return the result
@@ -72,16 +112,65 @@ fn execute_command(command: &str) -> Result<(), String> {
 
 /// Generate the actual upgrade command
 pub fn generate_upgrade_command(args: &UpgradeArgs) -> String {
-    format!(
+    let mut command = format!(
         "stellar contract invoke \
         --id {} \
         --source {} \
-        --network {} \
-        -- \
-        upgrade \
-        --new_wasm_hash {}",
-        args.id, args.source, args.network, args.wasm_hash
-    )
+        --network {}",
+        args.id, args.source, args.network
+    );
+
+    // Add optional parameters
+    if let Some(rpc_url) = &args.rpc_url {
+        command.push_str(&format!(" --rpc-url {}", rpc_url));
+    }
+
+    if let Some(headers) = &args.rpc_header {
+        for header in headers {
+            command.push_str(&format!(" --rpc-header {}", header));
+        }
+    }
+
+    if let Some(passphrase) = &args.network_passphrase {
+        command.push_str(&format!(" --network-passphrase {}", passphrase));
+    }
+
+    if args.fee != 100 {
+        command.push_str(&format!(" --fee {}", args.fee));
+    }
+
+    if args.is_view {
+        command.push_str(" --is-view");
+    }
+
+    if let Some(instr) = args.instructions {
+        command.push_str(&format!(" --instructions {}", instr));
+    }
+
+    if args.build_only {
+        command.push_str(" --build-only");
+    }
+
+    if let Some(send) = &args.send {
+        command.push_str(&format!(" --send {}", send));
+    }
+
+    if args.cost {
+        command.push_str(" --cost");
+    }
+
+    // Add the contract function and args
+    command.push_str(" -- upgrade");
+    command.push_str(&format!(" --new_wasm_hash {}", args.wasm_hash));
+    
+    // Add any additional contract args
+    if !args.contract_args.is_empty() {
+        for arg in &args.contract_args {
+            command.push_str(&format!(" {}", arg));
+        }
+    }
+
+    command
 }
 
 /// Run the upgrade command after security checks

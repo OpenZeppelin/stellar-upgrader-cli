@@ -7,8 +7,8 @@ pub fn fetch_contract_interface(args: &UpgradeArgs, context: &mut SecurityCheckC
     
     // Construct the command to get contract interface
     let command = format!(
-        "stellar contract info interface --contract-id {} --network {}",
-        args.id, args.network
+        "stellar contract info interface --wasm-hash {} --network {}",
+        args.wasm_hash, args.network
     );
     
     // Execute the command

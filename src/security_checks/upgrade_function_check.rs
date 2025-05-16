@@ -57,6 +57,16 @@ mod tests {
             wasm_hash: "test".to_string(),
             source: "test".to_string(),
             network: "test".to_string(),
+            rpc_url: None,
+            rpc_header: None,
+            network_passphrase: None,
+            fee: 100,
+            is_view: false,
+            instructions: None,
+            build_only: false,
+            send: None,
+            cost: false,
+            contract_args: vec![],
         }, &mut context);
         
         assert!(result.is_ok());
@@ -80,6 +90,16 @@ mod tests {
             wasm_hash: "test".to_string(),
             source: "test".to_string(),
             network: "test".to_string(),
+            rpc_url: None,
+            rpc_header: None,
+            network_passphrase: None,
+            fee: 100,
+            is_view: false,
+            instructions: None,
+            build_only: false,
+            send: None,
+            cost: false,
+            contract_args: vec![],
         }, &mut context);
         
         assert!(result.is_err());
@@ -104,6 +124,16 @@ mod tests {
             wasm_hash: "test".to_string(),
             source: "test".to_string(),
             network: "test".to_string(),
+            rpc_url: None,
+            rpc_header: None,
+            network_passphrase: None,
+            fee: 100,
+            is_view: false,
+            instructions: None,
+            build_only: false,
+            send: None,
+            cost: false,
+            contract_args: vec![],
         }, &mut context);
         
         assert!(result.is_err());
