@@ -70,6 +70,10 @@ pub struct UpgradeArgs {
     #[arg(long)]
     pub cost: bool,
     
+    /// Force upgrade and skip security checks
+    #[arg(long)]
+    pub force: bool,
+    
     /// Additional contract function arguments
     #[arg(last = true)]
     pub contract_args: Vec<String>,
@@ -175,8 +179,15 @@ pub fn generate_upgrade_command(args: &UpgradeArgs) -> String {
 
 /// Run the upgrade command after security checks
 pub fn run_upgrade(args: &UpgradeArgs) -> Result<(), String> {
-    // Perform security checks using the modular system
-    security_checks::run_all_checks(args)?;
+    // Conditionally perform security checks based on --force flag
+    if args.force {
+        println!("⚠️  WARNING: Security checks are being skipped due to --force flag!");
+        println!("⚠️  This may result in upgrade failures or loss of upgradeability.");
+        println!("⚠️  Proceed with caution!\n");
+    } else {
+        // Perform security checks using the modular system
+        security_checks::run_all_checks(args)?;
+    }
     
     // Generate the upgrade command
     let command = generate_upgrade_command(args);

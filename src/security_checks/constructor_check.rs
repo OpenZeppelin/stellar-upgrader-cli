@@ -65,6 +65,7 @@ mod tests {
             build_only: false,
             send: None,
             cost: false,
+            force: false,
             contract_args: vec![],
         }, &mut context);
         
@@ -100,6 +101,7 @@ mod tests {
             build_only: false,
             send: None,
             cost: false,
+            force: false,
             contract_args: vec![],
         }, &mut context);
         
