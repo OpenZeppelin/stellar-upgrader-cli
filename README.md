@@ -4,7 +4,11 @@ A CLI plugin for Stellar that simplifies the process of upgrading smart contract
 
 ## Overview
 
-This plugin provides a streamlined interface for upgrading Stellar smart contracts, replacing the verbose standard command with a simpler syntax. Before executing the upgrade, it performs several security checks to ensure the upgrade will be successful and the contract will remain upgradeable after the operation.
+This is a [Stellar CLI plugin](https://developers.stellar.org/docs/tools/cli/plugins) that provides a streamlined interface for upgrading Stellar smart contracts, replacing the verbose standard command with a simpler syntax. Before executing the upgrade, it performs several security checks to ensure the upgrade will be successful and the contract will remain upgradeable after the operation.
+
+**Plugin Repository**: [https://github.com/OpenZeppelin/stellar-upgrader-cli](https://github.com/OpenZeppelin/stellar-upgrader-cli)
+
+As a Stellar CLI plugin, this tool integrates seamlessly with the Stellar CLI and follows the standard plugin conventions. Once installed, it becomes available as a subcommand of the `stellar` CLI.
 
 ## Installation
 
@@ -24,6 +28,28 @@ cd stellar-upgrader
 cargo install --path .
 ```
 
+### Verify Installation
+
+After installation, verify that the plugin is available by listing installed plugins:
+
+```bash
+stellar plugins --list
+```
+
+You should see output similar to:
+
+```
+Installed Plugins:
+    upgrader
+    strkey
+```
+
+The `upgrader` plugin should be listed among your installed plugins. If it's not showing up, make sure:
+
+1. The binary is named `stellar-upgrader` and is in your `PATH`
+2. The file is executable (`chmod +x` if needed)
+3. Restart your terminal or reload your shell configuration
+
 ## Usage
 
 ### Basic Usage
@@ -39,10 +65,10 @@ stellar contract invoke \
   --new_wasm_hash 9ab3011a533a116f82f99ebcd00e72cdca5e42159aaca379fd249fdbd982d9ff
 
 # Use the simplified command:
-stellar contract upgrade --id CONTRACT_ID --wasm-hash 9ab3011a533a116f82f99ebcd00e72cdca5e42159aaca379fd249fdbd982d9ff
+stellar upgrader upgrade --id CONTRACT_ID --wasm-hash 9ab3011a533a116f82f99ebcd00e72cdca5e42159aaca379fd249fdbd982d9ff
 
 # You can also specify network and source (optional):
-stellar contract upgrade --id CONTRACT_ID --wasm-hash HASH --network testnet --source alice
+stellar upgrader upgrade --id CONTRACT_ID --wasm-hash HASH --network testnet --source alice
 ```
 
 ### Advanced Options
@@ -50,7 +76,7 @@ stellar contract upgrade --id CONTRACT_ID --wasm-hash HASH --network testnet --s
 The plugin supports all the parameters of the original `stellar contract invoke` command:
 
 ```bash
-stellar contract upgrade \
+stellar upgrader \
   --id CONTRACT_ID \
   --wasm-hash HASH \
   --source alice \
