@@ -14,10 +14,6 @@ impl SecurityCheck for UpgradeFunctionCheck {
         "Upgrade Function Check"
     }
     
-    fn description(&self) -> &str {
-        "Verifies that the contract exposes an upgrade function"
-    }
-    
     fn run(&self, _args: &UpgradeArgs, context: &mut SecurityCheckContext) -> Result<(), String> {
         if let Some(interface) = &context.contract_interface {
             // Check if the interface contains an upgrade function with the expected signature
@@ -66,6 +62,7 @@ mod tests {
             build_only: false,
             send: None,
             cost: false,
+            force: false,
             contract_args: vec![],
         }, &mut context);
         
@@ -99,6 +96,7 @@ mod tests {
             build_only: false,
             send: None,
             cost: false,
+            force: false,
             contract_args: vec![],
         }, &mut context);
         
@@ -133,6 +131,7 @@ mod tests {
             build_only: false,
             send: None,
             cost: false,
+            force: false,
             contract_args: vec![],
         }, &mut context);
         
