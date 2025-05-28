@@ -76,7 +76,7 @@ stellar upgrader upgrade --id CONTRACT_ID --wasm-hash HASH --network testnet --s
 The plugin supports all the parameters of the original `stellar contract invoke` command:
 
 ```bash
-stellar upgrader \
+stellar upgrader upgrade \
   --id CONTRACT_ID \
   --wasm-hash HASH \
   --source alice \
