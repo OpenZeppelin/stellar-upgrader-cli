@@ -89,7 +89,8 @@ stellar upgrader \
   --instructions 100000 \
   --build-only \
   --send yes \
-  --cost
+  --cost \
+  --force
 ```
 
 #### Parameter Reference
@@ -109,6 +110,7 @@ stellar upgrader \
 | `--build-only` | Build the transaction and only write the base64 XDR to stdout |
 | `--send` | Whether to send the transaction: "yes", "no", "default" |
 | `--cost` | Output the cost execution to stderr |
+| `--force` | Force the upgrade and skip all security checks (requires confirmation) |
 
 ## Security Checks
 
@@ -123,6 +125,31 @@ This plugin performs these security checks before executing the upgrade:
    - ❌ Fail: Missing upgrade function or incorrect signature, which would prevent future upgrades
 
 All security checks must pass for the upgrade command to execute.
+
+### Bypassing Security Checks
+
+Sometimes, even with security checks failing, you may want to force an upgrade. This can be done using the `--force` flag:
+
+```bash
+stellar contract upgrade --id CONTRACT_ID --wasm-hash HASH --force
+```
+
+When using `--force`, the tool will display a warning and ask for confirmation before proceeding:
+
+```
+⚠️  WARNING: Security checks are being skipped due to --force flag!
+⚠️  This may result in upgrade failures or loss of upgradeability.
+⚠️  Proceed with caution!
+
+Are you sure you want to proceed without security checks? (y/N):
+```
+
+**⚠️ Warning**: Using `--force` skips all security checks and may result in:
+- Upgrade failures
+- Loss of contract upgradeability
+- Unexpected contract behavior
+
+Only use `--force` when you understand the risks and have manually verified the upgrade is safe.
 
 ## Development
 

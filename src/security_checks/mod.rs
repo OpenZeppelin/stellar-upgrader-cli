@@ -20,7 +20,6 @@ impl SecurityCheckContext {
 
 pub trait SecurityCheck {
     fn name(&self) -> &str;
-    fn description(&self) -> &str;
     fn run(&self, args: &UpgradeArgs, context: &mut SecurityCheckContext) -> Result<(), String>;
 }
 

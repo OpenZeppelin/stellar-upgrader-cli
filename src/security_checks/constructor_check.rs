@@ -14,10 +14,6 @@ impl SecurityCheck for ConstructorCheck {
         "Constructor Check"
     }
     
-    fn description(&self) -> &str {
-        "Verifies that the contract doesn't have a __constructor function"
-    }
-    
     fn run(&self, _args: &UpgradeArgs, context: &mut SecurityCheckContext) -> Result<(), String> {
         if let Some(interface) = &context.contract_interface {
             // Check if the interface contains a __constructor function
@@ -65,6 +61,7 @@ mod tests {
             build_only: false,
             send: None,
             cost: false,
+            force: false,
             contract_args: vec![],
         }, &mut context);
         
@@ -100,6 +97,7 @@ mod tests {
             build_only: false,
             send: None,
             cost: false,
+            force: false,
             contract_args: vec![],
         }, &mut context);
         
