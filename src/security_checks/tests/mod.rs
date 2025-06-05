@@ -2,6 +2,7 @@
 mod integration_tests {
     use crate::security_checks::constructor_check::ConstructorCheck;
     use crate::security_checks::upgrade_function_check::UpgradeFunctionCheck;
+    use crate::security_checks::version_check::VersionCheck;
     use crate::security_checks::{SecurityCheck, SecurityCheckContext};
     use crate::UpgradeArgs;
 
@@ -61,6 +62,9 @@ mod integration_tests {
             "Upgrade function check failed: {:?}",
             upgrade_result
         );
+
+        // Note: Version check would fail in tests because we don't have real contracts
+        // So we don't test it in the integration test
     }
 
     #[test]
@@ -151,5 +155,21 @@ mod integration_tests {
         let upgrade_check = UpgradeFunctionCheck::new();
         let upgrade_result = upgrade_check.run(&args, &mut context);
         assert!(upgrade_result.is_err());
+    }
+
+    #[test]
+    fn test_version_check_unit_tests() {
+        // Test the version comparison logic separately
+        let version_check = VersionCheck::new();
+
+        // Test version comparison
+        assert!(version_check.compare_versions("1.0.0", "2.0.0").unwrap());
+        assert!(!version_check.compare_versions("2.0.0", "1.0.0").unwrap());
+        assert!(!version_check.compare_versions("1.0.0", "1.0.0").unwrap());
+
+        // Test version extraction
+        let metadata = r#"[{"sc_meta_v0":{"key":"binver","val":"1.5.2"}},{"sc_meta_v0":{"key":"rsver","val":"1.85.0"}}]"#;
+        let version = version_check.extract_binver(metadata).unwrap();
+        assert_eq!(version, "1.5.2");
     }
 }

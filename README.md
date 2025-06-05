@@ -124,7 +124,34 @@ This plugin performs these security checks before executing the upgrade:
    - ✅ Pass: `upgrade` function with proper `new_wasm_hash: soroban_sdk::BytesN<32>` parameter found
    - ❌ Fail: Missing upgrade function or incorrect signature, which would prevent future upgrades
 
+3. **Version Check**: Compares the binary version (`binver`) in the contract metadata to ensure the new version is greater than the current version.
+   - ✅ Pass: New binary version is greater than current version (e.g., 2.0.0 > 1.0.0)
+   - ❌ Fail: New version is not greater than current version (downgrades are not recommended)
+
 All security checks must pass for the upgrade command to execute.
+
+### How Version Check Works
+
+The version check uses the contract metadata to compare versions:
+
+1. **Current Version**: Fetches metadata from the deployed contract using `stellar contract info meta --id CONTRACT_ID`
+2. **New Version**: Fetches metadata from the new WASM hash using `stellar contract info meta --wasm-hash NEW_HASH`
+3. **Comparison**: Compares the `binver` field using semantic versioning rules
+
+Example metadata format:
+```json
+[
+  {"sc_meta_v0":{"key":"binver","val":"2.0.0"}},
+  {"sc_meta_v0":{"key":"rsver","val":"1.85.0"}},
+  {"sc_meta_v0":{"key":"rssdkver","val":"22.0.8#f46e9e0610213bbb72285566f9dd960ff96d03d8"}}
+]
+```
+
+The plugin extracts the `binver` value and compares versions using semantic versioning:
+- `2.0.0` > `1.9.9` ✅
+- `1.1.0` > `1.0.5` ✅
+- `1.0.0` > `1.0.0` ❌ (equal versions)
+- `1.0.0` > `2.0.0` ❌ (downgrade)
 
 ### Bypassing Security Checks
 
@@ -148,6 +175,7 @@ Are you sure you want to proceed without security checks? (y/N):
 - Upgrade failures
 - Loss of contract upgradeability
 - Unexpected contract behavior
+- Version downgrades that could cause compatibility issues
 
 Only use `--force` when you understand the risks and have manually verified the upgrade is safe.
 
@@ -181,6 +209,7 @@ stellar-upgrader/
 │       ├── mod.rs         # Main security check module
 │       ├── constructor_check.rs
 │       ├── upgrade_function_check.rs
+│       ├── version_check.rs
 │       └── contract_info.rs
 ├── examples/              # Usage examples
 └── tests/                 # Integration tests
@@ -212,10 +241,6 @@ impl SecurityCheck for NewCheck {
         "New Security Check"
     }
 
-    fn description(&self) -> &str {
-        "Description of what this check does"
-    }
-
     fn run(&self, _args: &UpgradeArgs, context: &mut SecurityCheckContext) -> Result<(), String> {
         // Check implementation
         Ok(())
@@ -227,6 +252,7 @@ pub fn get_security_checks() -> Vec<Box<dyn SecurityCheck>> {
     vec![
         Box::new(constructor_check::ConstructorCheck::new()),
         Box::new(upgrade_function_check::UpgradeFunctionCheck::new()),
+        Box::new(version_check::VersionCheck::new()),
         Box::new(new_check::NewCheck::new()),
     ]
 }

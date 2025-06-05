@@ -3,6 +3,7 @@ mod contract_info;
 #[cfg(test)]
 mod tests;
 mod upgrade_function_check;
+mod version_check;
 
 use crate::UpgradeArgs;
 
@@ -28,6 +29,7 @@ pub fn get_security_checks() -> Vec<Box<dyn SecurityCheck>> {
     vec![
         Box::new(constructor_check::ConstructorCheck::new()),
         Box::new(upgrade_function_check::UpgradeFunctionCheck::new()),
+        Box::new(version_check::VersionCheck::new()),
     ]
 }
 
