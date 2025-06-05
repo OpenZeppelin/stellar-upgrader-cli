@@ -7,6 +7,18 @@ description = "A Stellar CLI plugin to simplify contract upgrades"
 license = "Apache-2.0"
 repository = "https://github.com/your-username/stellar-upgrader"
 readme = "README.md"
+rust-version = "1.85"         #MSRV
+
+[profile.release]
+opt-level = 0
+overflow-checks = false
+panic = "unwind"
+
+[profile.test]
+debug = true
+opt-level = 0
+overflow-checks = true
+panic = "unwind"
 
 [dependencies]
 clap = { version = "4.3.8", features = ["derive"] }
@@ -18,4 +30,4 @@ path = "src/lib.rs"
 
 [[bin]]
 name = "stellar-upgrader"
-path = "src/main.rs" 
+path = "src/main.rs"

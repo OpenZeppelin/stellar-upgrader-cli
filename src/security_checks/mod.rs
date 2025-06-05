@@ -1,8 +1,8 @@
 mod constructor_check;
 mod contract_info;
-mod upgrade_function_check;
 #[cfg(test)]
 mod tests;
+mod upgrade_function_check;
 
 use crate::UpgradeArgs;
 
@@ -34,16 +34,16 @@ pub fn get_security_checks() -> Vec<Box<dyn SecurityCheck>> {
 // Run all security checks
 pub fn run_all_checks(args: &UpgradeArgs) -> Result<(), String> {
     let mut context = SecurityCheckContext::new();
-    
+
     // First, get contract info which will be used by multiple checks
     contract_info::fetch_contract_interface(args, &mut context)?;
-    
+
     let checks = get_security_checks();
-    
+
     for check in checks {
         println!("Running security check: {}", check.name());
         check.run(args, &mut context)?;
     }
-    
+
     Ok(())
-} 
+}

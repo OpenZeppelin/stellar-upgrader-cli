@@ -1,5 +1,5 @@
 use clap::Parser;
-use stellar_upgrader_plugin::{Commands, UpgraderCli, run_upgrade};
+use stellar_upgrader_plugin::{run_upgrade, Commands, UpgraderCli};
 
 fn main() {
     let cli = UpgraderCli::parse();
@@ -12,4 +12,4 @@ fn main() {
             }
         }
     }
-} 
+}
