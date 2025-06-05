@@ -1,6 +1,7 @@
 mod constructor_check;
 mod contract_info;
 mod upgrade_function_check;
+mod version_check;
 #[cfg(test)]
 mod tests;
 
@@ -28,6 +29,7 @@ pub fn get_security_checks() -> Vec<Box<dyn SecurityCheck>> {
     vec![
         Box::new(constructor_check::ConstructorCheck::new()),
         Box::new(upgrade_function_check::UpgradeFunctionCheck::new()),
+        Box::new(version_check::VersionCheck::new()),
     ]
 }
 
