@@ -21,15 +21,15 @@ pub struct UpgradeArgs {
     /// The contract ID to upgrade
     #[arg(long)]
     pub id: String,
-    
+
     /// The new WASM hash for the upgrade
     #[arg(long = "wasm-hash")]
     pub wasm_hash: String,
-    
+
     /// Source account to pay for the upgrade
     #[arg(long, default_value = "alice")]
     pub source: String,
-    
+
     /// Network to use (testnet, futurenet, mainnet)
     #[arg(long, default_value = "testnet")]
     pub network: String,
@@ -69,11 +69,11 @@ pub struct UpgradeArgs {
     /// Output the cost execution to stderr
     #[arg(long)]
     pub cost: bool,
-    
+
     /// Force upgrade and skip security checks
     #[arg(long)]
     pub force: bool,
-    
+
     /// Additional contract function arguments
     #[arg(last = true)]
     pub contract_args: Vec<String>,
@@ -82,13 +82,9 @@ pub struct UpgradeArgs {
 /// Execute a shell command and return the result
 fn execute_command(command: &str) -> Result<(), String> {
     let output = if cfg!(target_os = "windows") {
-        Command::new("cmd")
-            .args(["/C", command])
-            .output()
+        Command::new("cmd").args(["/C", command]).output()
     } else {
-        Command::new("sh")
-            .args(["-c", command])
-            .output()
+        Command::new("sh").args(["-c", command]).output()
     };
 
     match output {
@@ -166,7 +162,7 @@ pub fn generate_upgrade_command(args: &UpgradeArgs) -> String {
     // Add the contract function and args
     command.push_str(" -- upgrade");
     command.push_str(&format!(" --new_wasm_hash {}", args.wasm_hash));
-    
+
     // Add any additional contract args
     if !args.contract_args.is_empty() {
         for arg in &args.contract_args {
@@ -180,11 +176,14 @@ pub fn generate_upgrade_command(args: &UpgradeArgs) -> String {
 /// Ask for user confirmation when using --force flag
 fn confirm_force_upgrade() -> Result<bool, String> {
     print!("Are you sure you want to proceed without security checks? (y/N): ");
-    std::io::Write::flush(&mut std::io::stdout()).map_err(|e| format!("Failed to flush stdout: {}", e))?;
-    
+    std::io::Write::flush(&mut std::io::stdout())
+        .map_err(|e| format!("Failed to flush stdout: {}", e))?;
+
     let mut input = String::new();
-    std::io::stdin().read_line(&mut input).map_err(|e| format!("Failed to read user input: {}", e))?;
-    
+    std::io::stdin()
+        .read_line(&mut input)
+        .map_err(|e| format!("Failed to read user input: {}", e))?;
+
     let input = input.trim().to_lowercase();
     Ok(input == "y" || input == "yes")
 }
@@ -212,7 +211,7 @@ pub fn run_upgrade_with_input(args: &UpgradeArgs, force_input: Option<&str>) -> 
         println!("⚠️  WARNING: Security checks are being skipped due to --force flag!");
         println!("⚠️  This may result in upgrade failures or loss of upgradeability.");
         println!("⚠️  Proceed with caution!\n");
-        
+
         if !check_force_confirmation(force_input)? {
             return Err("Upgrade cancelled by user".to_string());
         }
@@ -221,13 +220,13 @@ pub fn run_upgrade_with_input(args: &UpgradeArgs, force_input: Option<&str>) -> 
         // Perform security checks using the modular system
         security_checks::run_all_checks(args)?;
     }
-    
+
     // Generate the upgrade command
     let command = generate_upgrade_command(args);
-    
+
     // Display the command to be executed
     println!("Executing: {}", command);
-    
+
     // Actually execute the command
     execute_command(&command)
 }
@@ -259,53 +258,65 @@ mod tests {
     #[test]
     fn test_force_flag_with_yes_confirmation() {
         let args = create_test_args_with_force(true);
-        
+
         // Test with "y" input
         let result = run_upgrade_with_input(&args, Some("y"));
         // This will fail because we don't have stellar CLI, but it should get past the confirmation
         assert!(result.is_err());
         let error_msg = result.unwrap_err();
         // Should fail with contract not found or command execution error, not confirmation error
-        assert!(error_msg.contains("contract not found") || error_msg.contains("Failed to execute command"));
-        
+        assert!(
+            error_msg.contains("contract not found")
+                || error_msg.contains("Failed to execute command")
+        );
+
         // Test with "yes" input
         let result = run_upgrade_with_input(&args, Some("yes"));
         assert!(result.is_err());
         let error_msg = result.unwrap_err();
-        assert!(error_msg.contains("contract not found") || error_msg.contains("Failed to execute command"));
-        
+        assert!(
+            error_msg.contains("contract not found")
+                || error_msg.contains("Failed to execute command")
+        );
+
         // Test with "Y" input (uppercase)
         let result = run_upgrade_with_input(&args, Some("Y"));
         assert!(result.is_err());
         let error_msg = result.unwrap_err();
-        assert!(error_msg.contains("contract not found") || error_msg.contains("Failed to execute command"));
-        
+        assert!(
+            error_msg.contains("contract not found")
+                || error_msg.contains("Failed to execute command")
+        );
+
         // Test with "YES" input (uppercase)
         let result = run_upgrade_with_input(&args, Some("YES"));
         assert!(result.is_err());
         let error_msg = result.unwrap_err();
-        assert!(error_msg.contains("contract not found") || error_msg.contains("Failed to execute command"));
+        assert!(
+            error_msg.contains("contract not found")
+                || error_msg.contains("Failed to execute command")
+        );
     }
 
     #[test]
     fn test_force_flag_with_no_confirmation() {
         let args = create_test_args_with_force(true);
-        
+
         // Test with "n" input
         let result = run_upgrade_with_input(&args, Some("n"));
         assert!(result.is_err());
         assert_eq!(result.unwrap_err(), "Upgrade cancelled by user");
-        
+
         // Test with "no" input
         let result = run_upgrade_with_input(&args, Some("no"));
         assert!(result.is_err());
         assert_eq!(result.unwrap_err(), "Upgrade cancelled by user");
-        
+
         // Test with empty input (default is no)
         let result = run_upgrade_with_input(&args, Some(""));
         assert!(result.is_err());
         assert_eq!(result.unwrap_err(), "Upgrade cancelled by user");
-        
+
         // Test with random input (default is no)
         let result = run_upgrade_with_input(&args, Some("maybe"));
         assert!(result.is_err());
@@ -315,17 +326,19 @@ mod tests {
     #[test]
     fn test_no_force_flag_runs_security_checks() {
         let args = create_test_args_with_force(false);
-        
+
         // This should try to run security checks and fail because we don't have a real contract
         let result = run_upgrade_with_input(&args, None);
         assert!(result.is_err());
         // Should fail during security checks, not during command execution
         let error_msg = result.unwrap_err();
         // The test fails because of invalid wasm hash or contract interface issues
-        assert!(error_msg.contains("Failed to get contract interface") || 
-                error_msg.contains("Contract interface information not available") ||
-                error_msg.contains("invalid") ||
-                error_msg.contains("Failed to execute command"));
+        assert!(
+            error_msg.contains("Failed to get contract interface")
+                || error_msg.contains("Contract interface information not available")
+                || error_msg.contains("invalid")
+                || error_msg.contains("Failed to execute command")
+        );
     }
 
     #[test]
@@ -349,7 +362,7 @@ mod tests {
         };
 
         let command = generate_upgrade_command(&args);
-        
+
         assert!(command.contains("stellar contract invoke"));
         assert!(command.contains("--id test_contract"));
         assert!(command.contains("--source alice"));
@@ -375,7 +388,7 @@ mod tests {
         assert!(check_force_confirmation(Some("YES")).unwrap());
         assert!(check_force_confirmation(Some(" y ")).unwrap()); // with whitespace
         assert!(check_force_confirmation(Some(" yes ")).unwrap()); // with whitespace
-        
+
         // Test negative confirmations
         assert!(!check_force_confirmation(Some("n")).unwrap());
         assert!(!check_force_confirmation(Some("no")).unwrap());
@@ -384,4 +397,4 @@ mod tests {
         assert!(!check_force_confirmation(Some("nope")).unwrap());
         assert!(!check_force_confirmation(Some("false")).unwrap());
     }
-} 
+}

@@ -181,6 +181,23 @@ Only use `--force` when you understand the risks and have manually verified the 
 
 ## Development
 
+Run the following commands to install pre-commit hooks:
+
+- Install pre-commit hooks:
+
+  ```bash
+  pip install pre-commit
+  pre-commit install --install-hooks -t commit-msg -t pre-commit -t pre-push
+  ```
+
+  > :warning: If you encounter issues with pip, consider using [pipx](https://pipx.pypa.io/stable/installation/) for a global installation.
+
+- Install the toolchain:
+
+  ```sh
+  rustup component add rustfmt
+  ```
+
 ### Project Structure
 
 ```
@@ -223,7 +240,7 @@ impl SecurityCheck for NewCheck {
     fn name(&self) -> &str {
         "New Security Check"
     }
-    
+
     fn run(&self, _args: &UpgradeArgs, context: &mut SecurityCheckContext) -> Result<(), String> {
         // Check implementation
         Ok(())
