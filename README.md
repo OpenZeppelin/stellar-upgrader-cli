@@ -22,7 +22,7 @@ As a Stellar CLI plugin, this tool integrates seamlessly with the Stellar CLI an
 ```bash
 # Clone the repository
 git clone https://github.com/OpenZeppelin/stellar-upgrader-cli.git
-cd stellar-upgrader
+cd stellar-upgrader-cli
 
 # Build and install
 cargo install --path .
