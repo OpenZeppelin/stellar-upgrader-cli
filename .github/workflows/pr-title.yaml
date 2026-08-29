@@ -9,6 +9,9 @@ on:
       - edited
       - reopened
       - synchronize
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
